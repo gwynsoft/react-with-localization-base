@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
-import cookies from "js-cookie";
-
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect,
   Link,
+  Redirect,
 } from "react-router-dom";
-import Home from "./components/Home";
+//import cookies from "js-cookie";
 
+import "flag-icon-css/css/flag-icon.min.css";
+import "./App.scss";
 const languages = [
   {
     code: "it",
@@ -26,20 +26,29 @@ const languages = [
 ];
 
 function Navbar() {
-  const { t } = useTranslation();
-  const currentLanguageCode = cookies.get("i18next") || "en";
+  const { t, i18n } = useTranslation();
+
+  const currentLanguageCode = i18n.language; //cookies.get("i18next") || "en";
 
   return (
-    <div>
-      <div>
-        <button>
-          <Link to={`/${currentLanguageCode}`}>Home</Link>
+    <div className="navbar">
+      <div className="navigation">
+        <button className="switcher__btn">
+          <Link to="/">{t("navbar.home")}</Link>
         </button>
-        <button>
-          <Link to={`/${currentLanguageCode}/${t("about-us")}`}>About Us</Link>
+        <button className="switcher__btn">
+          <Link to={`/${currentLanguageCode}/about-us`}>
+            {t("navbar.about")}
+          </Link>
         </button>
+      </div>
+      <div className="switcher">
         {languages.map(({ code, name, country_code }) => (
           <button
+            style={{
+              opacity: currentLanguageCode === code ? 0.3 : 1,
+            }}
+            className="switcher__btn"
             key={country_code}
             onClick={() => {
               i18next.changeLanguage(code);
@@ -50,12 +59,7 @@ function Navbar() {
               window.location = there;
             }}
           >
-            <span
-              className={`flag-icon flag-icon-${country_code}`}
-              style={{
-                opacity: currentLanguageCode === code ? 0.2 : 1,
-              }}
-            ></span>
+            <span className={`flag-icon flag-icon-${country_code}`}></span>
             {name}
           </button>
         ))}
@@ -64,38 +68,55 @@ function Navbar() {
   );
 }
 
-function App() {
-  const currentLanguageCode = cookies.get("i18next") || "en";
-  const currentLanguage = languages.find((l) => l.code === currentLanguageCode);
+function Home() {
   const { t } = useTranslation();
+  return (
+    <div className="container">
+      <h1>{t("home.message")}</h1>
+    </div>
+  );
+}
+
+function AboutUs() {
+  const { t } = useTranslation();
+  return (
+    <div className="container">
+      <h1>{t("about.message")}</h1>
+    </div>
+  );
+}
+
+function App() {
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language; //cookies.get("i18next") || "en";
+  //const currentLanguage = languages.find((l) => l.code === currentLanguageCode);
 
   useEffect(() => {
-    document.title = t("app_title");
+    document.title = t("app.title");
   }, [currentLanguage, t]);
 
-  document.querySelector("html").setAttribute("lang", currentLanguageCode); // Added to change language code in html lang property
+  document.querySelector("html").setAttribute("lang", currentLanguage); // Added to change language code in html lang property
 
   return (
     <Router>
       <div>
-        <Navbar></Navbar>
+        <Navbar />
         <Switch>
           <Route path="/" exact>
-            <Redirect to={`/${currentLanguageCode}`}></Redirect>
+            <Redirect to={`/${currentLanguage}`} />
           </Route>
           <Route path="/:lang" exact>
-            <Home page="home" />
+            <Home />
           </Route>
+          <Route path="/:lang/about-us">
+            <AboutUs />
+          </Route>
+          <div className="container">
+            <h1>{t("app.welcome")}</h1>
+          </div>
         </Switch>
       </div>
     </Router>
-    /*<div className="container">
-      <Navbar />
-
-      <div className="d-flex flex-column align-items-start">
-        <h1 className="font-weight-normal mb-3">{t("welcome-to-react")}</h1>
-      </div>
-    </div>*/
   );
 }
 

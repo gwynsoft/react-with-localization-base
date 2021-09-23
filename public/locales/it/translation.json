@@ -1,0 +1,10 @@
+{
+  "app.welcome": "Benvenuti a React e react-i18next",
+  "app.title": "Titolo del App",
+
+  "navbar.home": "Home",
+  "navbar.about": "Chi Siamo",
+
+  "home.message": "Pagina Home",
+  "about.message": "Chi Siamo"
+}
